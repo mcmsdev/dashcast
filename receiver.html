@@ -92,6 +92,14 @@
 
         main.classList.add("show");
 
+        if (window.addEventListener) {
+            window.addEventListener("message", checkMessage, false);
+        }
+        else {
+            window.attachEvent("onmessage", checkMessage);
+        }
+
+
         function setStatus(msg) {
           if (msg){ status.classList.remove("empty");}
           else { status.classList.add("empty"); }
@@ -140,8 +148,8 @@
         cast.receiver.logger.setLevelValue(0);
         window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
         castReceiverManager.onReady = function(event) {
-          window.castReceiverManager.setApplicationState("Application ready");
-          setStatus("Waiting for address")
+	   window.castReceiverManager.setApplicationState("Application ready");
+          setStatus("Waiting for address");
         };
         
         // create a CastMessageBus to handle messages for a custom namespace
@@ -161,8 +169,21 @@
 
         // initialize the CastReceiverManager with an application status message
         window.castReceiverManager.start({statusText: "Application is starting"});
+
+        function checkMessage(evt) {
+	    // Get a handle to the iframe element
+
+            if (evt.data == 'loaded') {
+                afterLoading();
+            }
+        }
+
+	function afterLoading(){
+            window.castReceiverManager.setApplicationState("Successfully loaded page!");
+	}
       };
-    
+
+
     </script>
   </body>
 </html>
